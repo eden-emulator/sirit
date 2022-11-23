@@ -48,6 +48,12 @@ Id Module::OpGroupNonUniformBroadcastFirst(Id result_type, Id scope, Id value) {
                  << EndOp{};
 }
 
+Id Module::OpGroupNonUniformShuffle(Id result_type, Id scope, Id value, Id id) {
+    code->Reserve(6);
+    return *code << OpId{spv::Op::OpGroupNonUniformShuffle, result_type} << scope << value << id
+                  << EndOp{};
+}
+
 Id Module::OpGroupNonUniformShuffleXor(Id result_type, Id scope, Id value, Id mask) {
     code->Reserve(6);
     return *code << OpId{spv::Op::OpGroupNonUniformShuffleXor, result_type} << scope << value
