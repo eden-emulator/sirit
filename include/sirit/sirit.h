@@ -1428,8 +1428,8 @@ public:
     /// 3) store the New Value back through Pointer.
     Id OpAtomicXor(Id result_type, Id pointer, Id memory, Id semantics, Id value);
 
-    // Print a message for vulkan layers to use, e.g. renderdoc
-    // Usage is like C printf
+    /// Print a message for vulkan layers to use, e.g. renderdoc
+    /// Usage is like C printf
     Id OpDebugPrintf(Id fmt, std::span<const Id> fmt_args);
 
     /// Returns a two-component floating point vector that represents the 2D texture coordinates
@@ -1476,11 +1476,15 @@ public:
     /// Result is the middle of x, y, and z, interpreted as signed integers.
     Id OpSMid3AMD(Id result_type, Id x, Id y, Id z);
 
+    /// Returns the value of the input <interpolant> without any interpolation, i.e. the raw output value of previous shader stage.
+    Id OpInterpolateAtVertexAMD(Id result_type, Id interpolant, Id vertex_index);
+
 private:
     Id GetGLSLstd450();
     Id GetNonSemanticDebugPrintf();
     Id GetAmdGcnShader();
     Id GetAmdShaderTrinaryMinMax();
+    Id GetAmdExplicitVertexParameter();
 
     std::uint32_t version{};
     std::uint32_t bound{};
@@ -1491,6 +1495,7 @@ private:
     std::optional<Id> non_semantic_debug_printf;
     std::optional<Id> amd_gcn_shader;
     std::optional<Id> amd_shader_trinary_minmax;
+    std::optional<Id> amd_explicit_vertex_parameter;
 
     spv::AddressingModel addressing_model{spv::AddressingModel::Logical};
     spv::MemoryModel memory_model{spv::MemoryModel::GLSL450};
