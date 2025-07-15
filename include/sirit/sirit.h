@@ -1270,6 +1270,11 @@ public:
     /// TBD
     Id OpSubgroupAllEqualKHR(Id result_type, Id predicate);
 
+    // Find the least significant bit set to 1 in Value, considering only the bits in Value required
+    // to represent all bits of the scope restricted tangle. If none of the considered bits is set to 1,
+    // the resulting value is undefined.
+    Id OpGroupNonUniformBallotFindLSB(Id result_type, Id scope, Id value);
+
     // Result is the Value of the invocation identified by the id Id to all active invocations in
     // the group.
     Id OpGroupNonUniformBroadcast(Id result_type, Id scope, Id value, Id id);
