@@ -24,7 +24,7 @@ jobs:
             msvc_arch: amd64
             platform: windows
 
-          - os: windows-latest
+          - os: windows-11-arm
             arch: arm64
             msvc_arch: amd64_arm64
             platform: windows
@@ -187,6 +187,8 @@ jobs:
           release: "r151054"
           usesh: true
           envs: 'PLATFORM ARCH GITHUB_WORKSPACE VERSION'
+          prepare: |
+            pkg install cmake bash ninja
           run: |
             chmod a+x ./.ci/package.sh ./.ci/sums.sh
             cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release
@@ -201,7 +203,7 @@ jobs:
           usesh: true
           envs: 'PLATFORM ARCH GITHUB_WORKSPACE VERSION'
           prepare: |
-            pkg install -y cmake bash Ninja
+            pkg install -y cmake bash ninja
           run: |
             chmod a+x ./.ci/package.sh ./.ci/sums.sh
             cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release
