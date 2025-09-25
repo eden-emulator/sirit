@@ -2,7 +2,9 @@
 
 cmake --install build --prefix install
 
-[ "$ARCH" != "amd64" ] && [ "$PLATFORM" != "android" ] && [ "$PLATFORM" != "windows" ] && PLATFORM=$PLATFORM-$ARCH
+if [ "$ARCH" != "amd64" ] || [ "$PLATFORM" == "windows" ]; then
+    [ "$PLATFORM" != "android" ] && PLATFORM=$PLATFORM-$ARCH
+fi
 
 ROOTDIR=$PWD
 mkdir -p artifacts
