@@ -2,9 +2,14 @@ name: CI
 
 on:
   workflow_call:
+    inputs:
+      version:
+        description: 'Sirit version'
+        type: string
+        default: 'test'
 
 env:
-  VERSION: "092425"
+  VERSION: "${{ inputs.version }}"
 
 jobs:
   desktop:

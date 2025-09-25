@@ -17,6 +17,8 @@ jobs:
   build:
     name: Build
     uses: ./.github/workflows/build.yml
+    with:
+      version: ${{ env.VERSION }}
 
   release:
     needs: build
@@ -38,6 +40,13 @@ jobs:
       - name: Generate Changelog
         run: |
           ./tools/changelog.sh > changelog.md
+
+      - name: Fix Windows arm64 artifact
+        run: |
+          cd windows-arm64
+          zstd -10 *.tar
+          ../.ci/sums.sh *.tar.zst
+          rm *.tar
 
       - name: Release
         uses: softprops/action-gh-release@v2.3.2

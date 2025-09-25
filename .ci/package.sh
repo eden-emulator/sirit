@@ -9,10 +9,14 @@ mkdir -p artifacts
 
 cd install
 
-TARBALL=sirit-$PLATFORM-$VERSION.tar.zst
+TARBALL=sirit-$PLATFORM-$VERSION.tar
 
-tar --zstd -cf $ROOTDIR/artifacts/$TARBALL *
-
-cd $ROOTDIR/artifacts
-
-../.ci/sums.sh $TARBALL
+# annoying
+if [ "$PLATFORM" = "windows-arm64" ]; then
+    tar cf $ROOTDIR/artifacts/$TARBALL *
+else
+    TARBALL=$TARBALL.zst
+    tar --zstd -cf $ROOTDIR/artifacts/$TARBALL *
+    cd $ROOTDIR/artifacts
+    ../.ci/sums.sh $TARBALL
+fi
