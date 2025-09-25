@@ -11,7 +11,7 @@ artifact() {
   NAME="$1"
   PLATFORM="$2"
 
-  BASE_URL="${BASE_DOWNLOAD_URL}/${TAG}/${FILENAME}-${PLATFORM}-${VERSION}.tar.zst"
+  BASE_URL="${BASE_DOWNLOAD_URL}/${TAG}/sirit-${PLATFORM}-${VERSION}.tar.zst"
 
   echo -n "| "
   echo -n "[$NAME]($BASE_URL) | "
@@ -35,3 +35,4 @@ artifact Solaris solaris
 artifact FreeBSD freebsd
 artifact OpenBSD openbsd
 artifact macOS macos-universal
+artifact Source source

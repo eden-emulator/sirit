@@ -12,6 +12,31 @@ env:
   VERSION: "${{ inputs.version }}"
 
 jobs:
+  source:
+    name: "Source Pack"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Pack
+        run: |
+          pip install git-archive-all
+          git-archive-all source.tar
+          zstd -10 source.tar
+          mv source.tar.zst sirit-source-${{ inputs.version }}.tar.zst
+          ./.ci/sums.sh sirit-source-${{ inputs.version }}.tar.zst
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: source
+          path: sirit-source-${{ inputs.version }}.tar.zst*
+
   desktop:
     name: "${{ matrix.platform }} ${{ matrix.arch }}"
     runs-on: ${{ matrix.os }}

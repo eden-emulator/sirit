@@ -62,5 +62,6 @@ jobs:
             openbsd-*/*.tar.zst*
             linux-*/*.tar.zst*
             macos-*/*.tar.zst*
+            source/*.tar.zst*
 
           make_latest: true
