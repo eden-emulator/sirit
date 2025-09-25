@@ -18,7 +18,7 @@ jobs:
     name: Build
     uses: ./.github/workflows/build.yml
     with:
-      version: ${{ env.VERSION }}
+      version: "092425"
 
   release:
     needs: build

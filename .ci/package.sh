@@ -8,6 +8,7 @@ ROOTDIR=$PWD
 mkdir -p artifacts
 
 cd install
+cp $ROOTDIR/dist/CMakeLists.txt .
 
 TARBALL=sirit-$PLATFORM-$VERSION.tar
 
