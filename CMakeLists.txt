@@ -1,22 +1,32 @@
-# This file has been adapted from dynarmic
-
 cmake_minimum_required(VERSION 3.18)
-project(sirit CXX)
 
 # Determine if we're built as a subproject (using add_subdirectory)
 # or if this is the master project.
 set(MASTER_PROJECT OFF)
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+set(SUBPROJECT ON)
+
+# NOTE: source vs current_source detection is unreliable
+# this heuristic is more generally applicable esp w.r.t FetchContent
+if (NOT DEFINED PROJECT_NAME)
   set(MASTER_PROJECT ON)
+  set(SUBPROJECT OFF)
 endif()
 
+project(sirit CXX)
+
 # Sirit project options
-option(SIRIT_TESTS "Build tests" OFF)
+option(SIRIT_TESTS "Build tests" ${MASTER_PROJECT})
+option(SIRIT_INSTALL "Generate installation target" ${MASTER_PROJECT})
 option(SIRIT_USE_SYSTEM_SPIRV_HEADERS "Use system SPIR-V headers" OFF)
+option(SIRIT_BUILD_SHARED "Build sirit as a shared library" ${MASTER_PROJECT})
+option(SIRIT_BUILD_STATIC "Build sirit as a static library" ${SUBPROJECT})
 
 # Default to a Release build
 if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build"
+        FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+        Debug Release RelWithDebInfo MinSizeRel)
     message(STATUS "Defaulting to a Release build")
 endif()
 
@@ -27,6 +37,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Warn on CMake API deprecations
 set(CMAKE_WARN_DEPRECATED ON)
+
+if(CMAKE_STATIC_LIBRARY_PREFIX STREQUAL "" AND
+   CMAKE_STATIC_LIBRARY_SUFFIX STREQUAL ".lib")
+    # Avoid conflict between the dll import library and
+    # the static library (thanks microsoft)
+    set(SIRIT_STATIC_LIBNAME "sirit-static")
+else()
+    set(SIRIT_STATIC_LIBNAME "sirit")
+endif()
+
 
 # Disable in-source builds
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
@@ -41,7 +61,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 # Compiler flags
 if (MSVC)
     set(SIRIT_CXX_FLAGS
-        /std:c++latest # CMAKE_CXX_STANDARD as no effect on MSVC until CMake 3.10.
         /W4
         /w34263 # Non-virtual member function hides base class virtual function
         /w44265 # Class has virtual functions, but destructor is not virtual
@@ -87,6 +106,7 @@ enable_testing(true)
 if (SIRIT_USE_SYSTEM_SPIRV_HEADERS)
     find_package(SPIRV-Headers REQUIRED)
 else()
+    message(STATUS "[sirit] Using bundled SPIRV Headers")
     add_subdirectory(externals/SPIRV-Headers EXCLUDE_FROM_ALL)
 endif()
 
@@ -94,4 +114,39 @@ endif()
 add_subdirectory(src)
 if (SIRIT_TESTS)
     add_subdirectory(tests)
+endif()
+
+if (SIRIT_INSTALL)
+    include(GNUInstallDirs)
+
+    set(SIRIT_TARGETS SPIRV-Headers sirit)
+
+    if (TARGET sirit::sirit-static)
+        set(SIRIT_TARGETS ${SIRIT_TARGETS} sirit-static)
+    endif()
+
+    install(TARGETS ${SIRIT_TARGETS}
+        EXPORT siritTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+
+    install(EXPORT siritTargets
+        FILE siritTargets.cmake
+        NAMESPACE sirit::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/sirit
+    )
+
+    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        "${CMAKE_SOURCE_DIR}/CMakeModules/siritConfig.cmake.in"
+        "${CMAKE_BINARY_DIR}/siritConfig.cmake"
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/sirit
+    )
+
+    install(
+        FILES "${CMAKE_BINARY_DIR}/siritConfig.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/sirit
+    )
 endif()
