@@ -191,7 +191,7 @@ jobs:
           usesh: true
           envs: 'PLATFORM ARCH GITHUB_WORKSPACE VERSION'
           prepare: |
-            pkg install cmake bash ninja gcc14
+            pkg install cmake bash ninja gcc14 zstd
           run: |
             chmod a+x ./.ci/package.sh ./.ci/sums.sh
             cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release

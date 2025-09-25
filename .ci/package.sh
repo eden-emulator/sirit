@@ -16,8 +16,11 @@ TARBALL=sirit-$PLATFORM-$VERSION.tar
 if [ "$PLATFORM" = "windows-arm64" ]; then
     tar cf $ROOTDIR/artifacts/$TARBALL *
 else
-    TARBALL=$TARBALL.zst
-    tar --zstd -cf $ROOTDIR/artifacts/$TARBALL *
+    tar -cf $ROOTDIR/artifacts/$TARBALL *
+
     cd $ROOTDIR/artifacts
-    ../.ci/sums.sh $TARBALL
+    zstd -10 $TARBALL
+    rm $TARBALL
+
+    ../.ci/sums.sh $TARBALL.zst
 fi
