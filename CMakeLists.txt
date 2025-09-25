@@ -69,7 +69,10 @@ if (MSVC)
         /w34458 # Declaration of 'var' hides class member
         /w34459 # Declaration of 'var' hides global definition
         /w34946 # Reinterpret-cast between related types
-        /wd4592 # Symbol will be dynamically initialized (implementation limitation)
+
+        # Symbol will be dynamically initialized (implementation limitation)
+        /wd4592
+
         /permissive- # Stricter C++ standards conformance
         /MP
         /Zi
@@ -118,19 +121,6 @@ endif()
 
 if (SIRIT_INSTALL)
     include(GNUInstallDirs)
-
-    set(SIRIT_TARGETS SPIRV-Headers sirit)
-
-    if (TARGET sirit::sirit-static)
-        set(SIRIT_TARGETS ${SIRIT_TARGETS} sirit-static)
-    endif()
-
-    install(TARGETS ${SIRIT_TARGETS}
-        EXPORT siritTargets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
 
     install(EXPORT siritTargets
         FILE siritTargets.cmake

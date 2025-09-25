@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  VERSION: "092425"
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+    with:
+      version: "092425"
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download
+        uses: actions/download-artifact@v4
+
+      - name: Delete Previous Release
+        run: |
+          gh release delete "v${{ env.VERSION }}" --repo "${{ github.repository }}" --cleanup-tag -y
+          sleep 5
+        env:
+          GH_TOKEN: "${{ github.token }}"
+        continue-on-error: true
+
+      - name: Generate Changelog
+        run: |
+          ./.ci/changelog.sh > changelog.md
+
+      - name: Fix Windows arm64 artifact
+        run: |
+          cd windows-arm64
+          zstd -10 *.tar
+          ../.ci/sums.sh *.tar.zst
+          rm *.tar
+
+      - name: Release
+        uses: softprops/action-gh-release@v2.3.2
+        with:
+          body_path: ./changelog.md
+          name: Sirit ${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          files: |
+            windows-*/*.tar.zst*
+            android/*.tar.zst*
+            solaris-*/*.tar.zst*
+            freebsd-*/*.tar.zst*
+            openbsd-*/*.tar.zst*
+            linux-*/*.tar.zst*
+            macos-*/*.tar.zst*
+
+          make_latest: true

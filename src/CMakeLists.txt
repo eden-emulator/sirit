@@ -33,6 +33,8 @@ target_include_directories(siritobj
 
 target_link_libraries(siritobj PUBLIC SPIRV-Headers::SPIRV-Headers)
 
+set_property(TARGET siritobj PROPERTY POSITION_INDEPENDENT_CODE 1)
+
 if (SIRIT_BUILD_SHARED)
     add_library(sirit SHARED $<TARGET_OBJECTS:siritobj>)
 endif()
@@ -49,4 +51,21 @@ if (SIRIT_BUILD_STATIC)
     endif()
 endif()
 
+set_property(TARGET sirit PROPERTY PUBLIC_HEADER ../include/sirit/sirit.h)
+
 add_library(sirit::sirit ALIAS sirit)
+
+set(SIRIT_TARGETS sirit)
+
+if (TARGET sirit::sirit-static)
+    set(SIRIT_TARGETS ${SIRIT_TARGETS} sirit-static)
+endif()
+
+include(GNUInstallDirs)
+
+install(TARGETS ${SIRIT_TARGETS}
+    EXPORT siritTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sirit
+)
