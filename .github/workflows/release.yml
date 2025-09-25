@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate Changelog
         run: |
-          ./tools/changelog.sh > changelog.md
+          ./.ci/changelog.sh > changelog.md
 
       - name: Fix Windows arm64 artifact
         run: |
