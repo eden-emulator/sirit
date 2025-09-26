@@ -1,24 +1,20 @@
 name: Release
 
 on:
-  schedule:
-    - cron: "0 0 * * 1"
   push:
-    branches: [ "master" ]
+    tags:
+      - '*'
   workflow_dispatch:
 
 permissions:
   contents: write
-
-env:
-  VERSION: "092425"
 
 jobs:
   build:
     name: Build
     uses: ./.github/workflows/build.yml
     with:
-      version: "092425"
+      version: ${{ github.ref_name }}
 
   release:
     needs: build
@@ -31,7 +27,7 @@ jobs:
 
       - name: Delete Previous Release
         run: |
-          gh release delete "v${{ env.VERSION }}" --repo "${{ github.repository }}" --cleanup-tag -y
+          gh release delete "v${{ github.ref_name }}" --repo "${{ github.repository }}" --cleanup-tag -y
           sleep 5
         env:
           GH_TOKEN: "${{ github.token }}"
@@ -52,8 +48,9 @@ jobs:
         uses: softprops/action-gh-release@v2.3.2
         with:
           body_path: ./changelog.md
-          name: Sirit ${{ env.VERSION }}
-          tag_name: v${{ env.VERSION }}
+          name: Sirit ${{ github.ref_name }}
+          tag_name: v${{ github.ref_name }}
+          draft: true
           files: |
             windows-*/*.tar.zst*
             android/*.tar.zst*

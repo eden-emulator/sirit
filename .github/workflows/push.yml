@@ -1,7 +1,7 @@
 name: Test Build
 
 on:
-  pull_request:
+  push:
     branches: [ "master" ]
   workflow_dispatch:
 
@@ -10,4 +10,4 @@ jobs:
     name: Build
     uses: ./.github/workflows/build.yml
     with:
-      version: "test"
+      version: ${{ github.sha }}

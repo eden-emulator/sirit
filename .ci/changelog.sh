@@ -21,7 +21,7 @@ artifact() {
   echo
 }
 
-echo "Builds for $PRETTY_NAME $VERSION"
+echo "Builds for sirit $VERSION"
 echo
 echo "| Build | sha1sum | sha256sum | sha512sum |"
 echo "| ----- | ------- | --------- | --------- |"
