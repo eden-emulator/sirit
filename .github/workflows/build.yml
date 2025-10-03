@@ -252,6 +252,7 @@ jobs:
           release: "7.7"
           envs: 'PLATFORM ARCH GITHUB_WORKSPACE VERSION'
           prepare: |
+            pkg_add -u
             pkg_add cmake ninja bash
           run: |
             chmod a+x ./.ci/package.sh ./.ci/sums.sh
