@@ -27,7 +27,7 @@ jobs:
 
       - name: Delete Previous Release
         run: |
-          gh release delete "v${{ github.ref_name }}" --repo "${{ github.repository }}" --cleanup-tag -y
+          gh release delete "${{ github.ref_name }}" --repo "${{ github.repository }}" --cleanup-tag -y
           sleep 5
         env:
           GH_TOKEN: "${{ github.token }}"
@@ -35,6 +35,7 @@ jobs:
 
       - name: Generate Changelog
         run: |
+          export VERSION=${{ github.ref_name }}
           ./.ci/changelog.sh > changelog.md
 
       - name: Fix Windows arm64 artifact
@@ -49,7 +50,7 @@ jobs:
         with:
           body_path: ./changelog.md
           name: Sirit ${{ github.ref_name }}
-          tag_name: v${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
           draft: true
           files: |
             windows-*/*.tar.zst*
