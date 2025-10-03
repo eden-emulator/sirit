@@ -26,10 +26,10 @@ add_library(siritobj OBJECT
 target_compile_options(siritobj PRIVATE ${SIRIT_CXX_FLAGS})
 
 target_include_directories(siritobj
-                           PUBLIC
-                                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                                $<INSTALL_INTERFACE:include>
-                           PRIVATE .)
+    PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    PRIVATE .)
 
 target_link_libraries(siritobj PUBLIC SPIRV-Headers::SPIRV-Headers)
 
@@ -45,11 +45,16 @@ if (SIRIT_BUILD_STATIC)
         set_target_properties(sirit-static PROPERTIES
             OUTPUT_NAME "${SIRIT_STATIC_LIBNAME}"
         )
-        add_library(sirit::sirit-static ALIAS sirit-static)
-    else()
-        add_library(sirit STATIC $<TARGET_OBJECTS:siritobj>)
-    endif()
+    add_library(sirit::sirit-static ALIAS sirit-static)
+else()
+    add_library(sirit STATIC $<TARGET_OBJECTS:siritobj>)
 endif()
+endif()
+
+target_include_directories(sirit PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 set_property(TARGET sirit PROPERTY PUBLIC_HEADER ../include/sirit/sirit.h)
 
@@ -59,6 +64,10 @@ set(SIRIT_TARGETS sirit)
 
 if (TARGET sirit::sirit-static)
     set(SIRIT_TARGETS ${SIRIT_TARGETS} sirit-static)
+    target_include_directories(sirit-static PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
 endif()
 
 include(GNUInstallDirs)
