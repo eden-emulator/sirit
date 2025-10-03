@@ -2,9 +2,7 @@
 
 cmake --install build --prefix install
 
-if [ "$ARCH" != "amd64" ] || [ "$PLATFORM" == "windows" ]; then
-    [ "$PLATFORM" != "android" ] && PLATFORM=$PLATFORM-$ARCH
-fi
+[ "$PLATFORM" != "android" ] && PLATFORM=$PLATFORM-$ARCH
 
 ROOTDIR=$PWD
 mkdir -p artifacts
@@ -12,6 +10,7 @@ mkdir -p artifacts
 cd install
 cp $ROOTDIR/dist/CMakeLists.txt .
 
+VERSION=$(echo $VERSION | tr -d "v")
 TARBALL=sirit-$PLATFORM-$VERSION.tar
 
 # annoying
