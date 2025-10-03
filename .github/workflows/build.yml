@@ -200,7 +200,6 @@ jobs:
             arch: amd64
             vm-arch: x86_64
 
-
     env:
       PLATFORM: ${{ matrix.platform }}
       ARCH: ${{ matrix.arch }}
