@@ -43,3 +43,10 @@ set_target_properties(sirit PROPERTIES
 )
 
 add_library(sirit::sirit ALIAS sirit)
+add_library(SPIRV-Headers INTERFACE)
+
+target_include_directories(SPIRV-Headers INTERFACE
+    ${SIRIT_INCLUDE_DIR}
+)
+
+add_library(SPIRV-Headers::SPIRV-Headers ALIAS SPIRV-Headers)

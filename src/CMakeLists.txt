@@ -31,50 +31,53 @@ target_include_directories(siritobj
     $<INSTALL_INTERFACE:include>
     PRIVATE .)
 
-target_link_libraries(siritobj PUBLIC SPIRV-Headers::SPIRV-Headers)
+target_link_libraries(siritobj PUBLIC
+                      $<BUILD_INTERFACE:SPIRV-Headers::SPIRV-Headers>)
 
 set_property(TARGET siritobj PROPERTY POSITION_INDEPENDENT_CODE 1)
 
+macro(add_sirit_library name type)
+    add_library(${name} ${type} $<TARGET_OBJECTS:siritobj>)
+    add_library(sirit::${name} ALIAS ${name})
+    target_link_libraries(${name} PUBLIC
+                          $<BUILD_INTERFACE:SPIRV-Headers::SPIRV-Headers>)
+
+    target_include_directories(${name} PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
+endmacro()
+
 if (SIRIT_BUILD_SHARED)
-    add_library(sirit SHARED $<TARGET_OBJECTS:siritobj>)
+    add_sirit_library(sirit SHARED)
 endif()
 
 if (SIRIT_BUILD_STATIC)
     if (SIRIT_BUILD_SHARED)
-        add_library(sirit-static STATIC $<TARGET_OBJECTS:siritobj>)
+        add_sirit_library(sirit-static STATIC)
         set_target_properties(sirit-static PROPERTIES
             OUTPUT_NAME "${SIRIT_STATIC_LIBNAME}"
         )
-    add_library(sirit::sirit-static ALIAS sirit-static)
-else()
-    add_library(sirit STATIC $<TARGET_OBJECTS:siritobj>)
+    else()
+        add_sirit_library(sirit STATIC)
+    endif()
 endif()
-endif()
-
-target_include_directories(sirit PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
 
 set_property(TARGET sirit PROPERTY PUBLIC_HEADER ../include/sirit/sirit.h)
-
-add_library(sirit::sirit ALIAS sirit)
 
 set(SIRIT_TARGETS sirit)
 
 if (TARGET sirit::sirit-static)
     set(SIRIT_TARGETS ${SIRIT_TARGETS} sirit-static)
-    target_include_directories(sirit-static PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-    )
 endif()
 
-include(GNUInstallDirs)
+if (SIRIT_INSTALL)
+    include(GNUInstallDirs)
 
-install(TARGETS ${SIRIT_TARGETS}
-    EXPORT siritTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sirit
-)
+    install(TARGETS ${SIRIT_TARGETS}
+        EXPORT siritTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sirit
+    )
+endif()
