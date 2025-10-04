@@ -18,7 +18,9 @@ TARBALL=sirit-$PLATFORM-$VERSION.tar
 if [ "$PLATFORM" = "windows-arm64" ]; then
     tar cf "$ROOTDIR"/artifacts/"$TARBALL" -- *
 else
-    tar -cf "$ROOTDIR"/artifacts/"$TARBALL" -- *
+	# suntar does not support -- *
+    # shellcheck disable=SC2035
+    tar -cf "$ROOTDIR"/artifacts/"$TARBALL" *
 
     cd "$ROOTDIR"/artifacts
     zstd -10 "$TARBALL"
