@@ -6,7 +6,7 @@
 # Change to the current repo
 BASE_DOWNLOAD_URL="https://github.com/eden-emulator/sirit/releases/download"
 TAG=$VERSION
-VERSION=$(echo $TAG | tr -d "v")
+VERSION=$(echo "$TAG" | tr -d "v")
 
 artifact() {
   NAME="$1"
@@ -14,10 +14,10 @@ artifact() {
 
   BASE_URL="${BASE_DOWNLOAD_URL}/${TAG}/sirit-${PLATFORM}-${VERSION}.tar.zst"
 
-  echo -n "| "
-  echo -n "[$NAME]($BASE_URL) | "
+  printf "| "
+  printf "[%s](%s) | " "$NAME" "$BASE_URL"
   for sum in 1 256 512; do
-    echo -n "[Download]($BASE_URL.sha${sum}sum) |"
+    printf "[Download](%s.sha%ssum) |" "$BASE_URL" "$sum"
   done
   echo
 }
