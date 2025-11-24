@@ -45,7 +45,8 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: |
             windows-*/*.tar.zst*
-            android/*.tar.zst*
+            mingw-*/*.tar.zst*
+            android-*/*.tar.zst*
             solaris-*/*.tar.zst*
             freebsd-*/*.tar.zst*
             openbsd-*/*.tar.zst*
