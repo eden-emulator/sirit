@@ -102,9 +102,9 @@ jobs:
           msystem: ${{ matrix.msystem }}
           update: true
           install: >-
-            git make tar curl cmake zstd
+            git make tar curl cmake zstd ninja
           pacboy: >-
-            toolchain:p zstd:p
+            toolchain:p
 
       - name: Configure
         run: |
