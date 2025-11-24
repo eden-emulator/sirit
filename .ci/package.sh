@@ -2,7 +2,7 @@
 
 cmake --install build --prefix install
 
-[ "$PLATFORM" != "android" ] && PLATFORM=$PLATFORM-$ARCH
+PLATFORM=$PLATFORM-$ARCH
 
 ROOTDIR=$PWD
 mkdir -p artifacts

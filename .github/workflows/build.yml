@@ -42,7 +42,7 @@ jobs:
           path: sirit-source-${{ env.VERSION }}.tar.zst*
 
   desktop:
-    name: "${{ matrix.platform }} ${{ matrix.arch }}"
+    name: "${{ matrix.platform }} (${{ matrix.arch }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -58,6 +58,16 @@ jobs:
             msvc_arch: amd64_arm64
             platform: windows
 
+          - os: windows-latest
+            arch: amd64
+            platform: mingw
+            msystem: mingw64
+
+          - os: windows-11-arm
+            arch: arm64
+            platform: mingw
+            msystem: clangarm64
+
           - os: ubuntu-latest
             arch: amd64
             platform: linux
@@ -66,20 +76,40 @@ jobs:
             arch: aarch64
             platform: linux
 
+          - os: macos-latest
+            arch: universal
+            platform: macos
+
+    defaults:
+      run:
+        shell: ${{ matrix.platform == 'mingw' && 'msys2 {0}' || 'bash {0}' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - uses: ilammy/msvc-dev-cmd@v1
-        if: runner.os == 'Windows'
+        if: matrix.platform == 'windows'
         with:
           arch: ${{ matrix.arch }}
+
+      - name: Setup MSYS2
+        id: msys2
+        if: matrix.platform == 'mingw'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          update: true
+          install: >-
+            git make tar curl cmake
+          pacboy: >-
+            toolchain:p
 
       - name: Configure
         shell: bash
         run: |
-          cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         shell: bash
@@ -98,13 +128,16 @@ jobs:
           path: artifacts/*
 
   android:
-    name: "Android"
+    name: "Android (${{ matrix.arch }})"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        arch: [aarch64, x86_64]
 
     env:
       PLATFORM: android
+      ARCH: ${{ matrix.arch }}
 
     steps:
       - uses: actions/checkout@v4
@@ -117,14 +150,20 @@ jobs:
         shell: bash
         run: |
           sdkmanager --install "cmake;3.31.6"
+
+          case "$ARCH" in
+            aarch64) ABI=arm64-v8a ;;
+            x86_64)  ABI=x86_64 ;;
+          esac
+
           cmake \
             -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_ABI="${ABI}" \
             -DANDROID_PLATFORM=android-21 \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_SYSTEM_NAME=Android \
             -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT \
-            -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
+            -DCMAKE_ANDROID_ARCH_ABI="${ABI}" \
             -DCMAKE_ANDROID_STL_TYPE=c++_shared \
             -G Ninja \
             -DSIRIT_BUILD_STATIC=ON \
@@ -143,47 +182,11 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android
-          path: artifacts/*
-
-  macos:
-    name: "macOS"
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-
-    env:
-      PLATFORM: macos
-      ARCH: universal
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Configure
-        shell: bash
-        run: |
-          cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_BUILD_TYPE=Release -G Ninja
-
-      - name: Build
-        shell: bash
-        run: |
-          cmake --build build -j$(nproc)
-
-      - name: Package
-        shell: bash
-        run: |
-          ./.ci/package.sh
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-universal
+          name: android-${{ matrix.arch }}
           path: artifacts/*
 
   unix:
-    name: "${{ matrix.platform }} ${{ matrix.arch }}"
+    name: "${{ matrix.platform }} (${{ matrix.arch }})"
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
