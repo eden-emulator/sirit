@@ -102,9 +102,9 @@ jobs:
           msystem: ${{ matrix.msystem }}
           update: true
           install: >-
-            git make tar curl cmake
+            git make tar curl cmake zstd
           pacboy: >-
-            toolchain:p
+            toolchain:p zstd:p
 
       - name: Configure
         shell: bash
