@@ -32,7 +32,7 @@ target_include_directories(siritobj
     PRIVATE .)
 
 target_link_libraries(siritobj PUBLIC
-                      $<BUILD_INTERFACE:SPIRV-Headers::SPIRV-Headers>)
+    $<BUILD_INTERFACE:SPIRV-Headers::SPIRV-Headers>)
 
 set_property(TARGET siritobj PROPERTY POSITION_INDEPENDENT_CODE 1)
 
@@ -40,24 +40,24 @@ macro(add_sirit_library name type)
     add_library(${name} ${type} $<TARGET_OBJECTS:siritobj>)
     add_library(sirit::${name} ALIAS ${name})
     target_link_libraries(${name} PUBLIC
-                          $<BUILD_INTERFACE:SPIRV-Headers::SPIRV-Headers>)
+        $<BUILD_INTERFACE:SPIRV-Headers::SPIRV-Headers>)
 
     target_include_directories(${name} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-    )
+        $<INSTALL_INTERFACE:include>)
 endmacro()
 
-if (SIRIT_BUILD_SHARED)
+if(SIRIT_BUILD_SHARED)
     add_sirit_library(sirit SHARED)
+    set_target_properties(sirit PROPERTIES
+        OUTPUT_NAME "sirit")
 endif()
 
-if (SIRIT_BUILD_STATIC)
-    if (SIRIT_BUILD_SHARED)
+if(SIRIT_BUILD_STATIC)
+    if(SIRIT_BUILD_SHARED)
         add_sirit_library(sirit-static STATIC)
         set_target_properties(sirit-static PROPERTIES
-            OUTPUT_NAME "${SIRIT_STATIC_LIBNAME}"
-        )
+            OUTPUT_NAME "${SIRIT_STATIC_LIBNAME}")
     else()
         add_sirit_library(sirit STATIC)
     endif()
@@ -67,17 +67,16 @@ set_property(TARGET sirit PROPERTY PUBLIC_HEADER ../include/sirit/sirit.h)
 
 set(SIRIT_TARGETS sirit)
 
-if (TARGET sirit::sirit-static)
+if(TARGET sirit::sirit-static)
     set(SIRIT_TARGETS ${SIRIT_TARGETS} sirit-static)
 endif()
 
-if (SIRIT_INSTALL)
+if(SIRIT_INSTALL)
     include(GNUInstallDirs)
 
     install(TARGETS ${SIRIT_TARGETS}
         EXPORT siritTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sirit
-    )
+        RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sirit)
 endif()

@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 3.18)
 set(MASTER_PROJECT OFF)
 set(SUBPROJECT ON)
 
-# NOTE: source vs current_source detection is unreliable
-# this heuristic is more generally applicable esp w.r.t FetchContent
 if (NOT DEFINED PROJECT_NAME)
   set(MASTER_PROJECT ON)
   set(SUBPROJECT OFF)
@@ -38,15 +36,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Warn on CMake API deprecations
 set(CMAKE_WARN_DEPRECATED ON)
 
+if (WIN32)
+    set(CMAKE_SHARED_LIBRARY_PREFIX "")
+endif()
+
 if(CMAKE_STATIC_LIBRARY_PREFIX STREQUAL "" AND
    CMAKE_STATIC_LIBRARY_SUFFIX STREQUAL ".lib")
     # Avoid conflict between the dll import library and
-    # the static library (thanks microsoft)
+    # the static library
     set(SIRIT_STATIC_LIBNAME "sirit-static")
 else()
     set(SIRIT_STATIC_LIBNAME "sirit")
 endif()
-
 
 # Disable in-source builds
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)

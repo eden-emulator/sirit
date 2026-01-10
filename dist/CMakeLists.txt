@@ -21,26 +21,32 @@ if (UNIX)
 
     add_library(sirit ${LIB_TYPE} IMPORTED GLOBAL)
     set_target_properties(sirit PROPERTIES
-        IMPORTED_LOCATION ${SIRIT_LIB_DIR}/libsirit.${LIB_SUFFIX}
-    )
+        IMPORTED_LOCATION ${SIRIT_LIB_DIR}/libsirit.${LIB_SUFFIX})
+elseif(MINGW)
+    if (BUILD_SHARED_LIBS)
+        add_library(sirit SHARED IMPORTED GLOBAL)
+        set_target_properties(sirit PROPERTIES
+            IMPORTED_LOCATION ${SIRIT_LIB_DIR}/sirit.dll)
+    else()
+        add_library(sirit STATIC IMPORTED GLOBAL)
+        set_target_properties(sirit PROPERTIES
+            IMPORTED_LOCATION ${SIRIT_LIB_DIR}/libsirit.a)
+    endif()
 else() # Windows
     if (BUILD_SHARED_LIBS)
         add_library(sirit SHARED IMPORTED GLOBAL)
         set_target_properties(sirit PROPERTIES
             IMPORTED_LOCATION ${SIRIT_LIB_DIR}/sirit.dll
-            IMPORTED_IMPLIB ${SIRIT_LIB_DIR}/sirit.lib
-        )
+            IMPORTED_IMPLIB ${SIRIT_LIB_DIR}/sirit.lib)
     else()
         add_library(sirit STATIC IMPORTED GLOBAL)
         set_target_properties(sirit PROPERTIES
-            IMPORTED_LOCATION ${SIRIT_LIB_DIR}/sirit-static.lib
-        )
+            IMPORTED_LOCATION ${SIRIT_LIB_DIR}/sirit-static.lib)
     endif()
 endif()
 
 set_target_properties(sirit PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES ${SIRIT_INCLUDE_DIR}
-)
+    INTERFACE_INCLUDE_DIRECTORIES ${SIRIT_INCLUDE_DIR})
 
 add_library(sirit::sirit ALIAS sirit)
 
@@ -48,8 +54,7 @@ if (NOT TARGET SPIRV-Headers::SPIRV-Headers)
     add_library(SPIRV-Headers INTERFACE)
 
     target_include_directories(SPIRV-Headers INTERFACE
-        ${SIRIT_INCLUDE_DIR}
-    )
+        ${SIRIT_INCLUDE_DIR})
 
     add_library(SPIRV-Headers::SPIRV-Headers ALIAS SPIRV-Headers)
 endif()
