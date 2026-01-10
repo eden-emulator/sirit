@@ -26,7 +26,7 @@ elseif(MINGW)
     if (BUILD_SHARED_LIBS)
         add_library(sirit SHARED IMPORTED GLOBAL)
         set_target_properties(sirit PROPERTIES
-            IMPORTED_LOCATION ${SIRIT_LIB_DIR}/sirit.dll)
+            IMPORTED_LOCATION ${SIRIT_LIB_DIR}/msys-sirit.dll)
     else()
         add_library(sirit STATIC IMPORTED GLOBAL)
         set_target_properties(sirit PROPERTIES

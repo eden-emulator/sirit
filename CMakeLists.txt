@@ -83,6 +83,10 @@ if (MSVC)
         /DNOMINMAX
         /WX)
 
+    if (CMAKE_BUILD_TYPE STREQUAL "Release")
+        list(APPEND SIRIT_CXX_FLAGS /DEBUG:NONE)
+    endif()
+
     if (CMAKE_VS_PLATFORM_TOOLSET MATCHES "LLVM-vs[0-9]+")
         list(APPEND SIRIT_CXX_FLAGS
              -Qunused-arguments
