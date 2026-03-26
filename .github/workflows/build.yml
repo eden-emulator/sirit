@@ -126,7 +126,7 @@ jobs:
         if: ${{ matrix.ios_target }}
         run: |
           cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release \
-              DCMAKE_C_COMPILER="xcrun -sdk ${{ matrix.ios_target }} clang" -DCMAKE_CXX_COMPILER="xcrun -sdk ${{ matrix.ios_target }} clang++"
+              -DCMAKE_C_COMPILER="$(xcrun --sdk ${{ matrix.ios_target }} --find clang)" -DCMAKE_CXX_COMPILER="$(xcrun --sdk ${{ matrix.ios_target }} --find clang++)"
 
       - name: Build
         run: |
