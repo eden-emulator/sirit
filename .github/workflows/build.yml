@@ -80,6 +80,18 @@ jobs:
             arch: universal
             platform: macos
 
+          - os: macos-latest
+            arch: aarch64
+            ios_target: iphoneos
+            platform: ios
+
+          # TODO(crueter): Proper support for iphonesimulator
+          # Requires CPMUtil changes.
+          # - os: macos-latest
+          #   arch: aarch64
+          #   ios_target: iphonesimulator
+          #   platform: ios-simulator
+
     defaults:
       run:
         shell: ${{ matrix.platform == 'mingw' && 'msys2 {0}' || 'bash {0}' }}
@@ -109,6 +121,12 @@ jobs:
       - name: Configure
         run: |
           cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure (iOS)
+        if: ${{ matrix.ios_target }}
+        run: |
+          cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release \
+              DCMAKE_C_COMPILER_LAUNCHER="xcrun -sdk ${{ matrix.ios_target }}" -DCMAKE_CXX_COMPILER_LAUNCHER="xcrun -sdk ${{ matrix.ios_target }}"
 
       - name: Build
         run: |

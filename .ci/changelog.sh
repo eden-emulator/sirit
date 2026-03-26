@@ -43,4 +43,5 @@ artifact "Solaris (amd64)" solaris-amd64
 artifact "FreeBSD (amd64)" freebsd-amd64
 artifact "OpenBSD (amd64)" openbsd-amd64
 artifact macOS macos-universal
+artifact iOS ios-aarch64
 artifact Source source
