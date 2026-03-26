@@ -44,14 +44,6 @@ jobs:
           name: Sirit ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           files: |
-            windows-*/*.tar.zst*
-            mingw-*/*.tar.zst*
-            android-*/*.tar.zst*
-            solaris-*/*.tar.zst*
-            freebsd-*/*.tar.zst*
-            openbsd-*/*.tar.zst*
-            linux-*/*.tar.zst*
-            macos-*/*.tar.zst*
-            source/*.tar.zst*
+            */*.tar.zst*
 
           make_latest: true
