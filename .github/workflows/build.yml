@@ -127,7 +127,7 @@ jobs:
         if: ${{ matrix.platform == ios }}
         run: |
           cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=${{ matrix.ios_target }}
+              -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=${{ matrix.ios_target }} -DCMAKE_OSX_DEPLOYMENT_TARGET=16.0
 
       - name: Build
         run: |
