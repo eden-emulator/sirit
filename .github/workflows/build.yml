@@ -119,6 +119,7 @@ jobs:
             toolchain:p
 
       - name: Configure
+        if: ${{ ! matrix.ios_target }}
         run: |
           cmake -S . -B build -DSIRIT_BUILD_STATIC=ON -G Ninja -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_BUILD_TYPE=Release
 
