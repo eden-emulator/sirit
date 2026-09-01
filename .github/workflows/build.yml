@@ -50,12 +50,10 @@ jobs:
         include:
           - os: windows-latest
             arch: amd64
-            msvc_arch: amd64
             platform: windows
 
           - os: windows-11-arm
             arch: aarch64
-            msvc_arch: amd64_arm64
             platform: windows
 
           - os: windows-latest
@@ -101,10 +99,9 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Setup MSVC
         if: matrix.platform == 'windows'
-        with:
-          arch: ${{ matrix.arch }}
+        uses: crueter/setup-msvc-dev@master
 
       - name: Setup MSYS2
         id: msys2
