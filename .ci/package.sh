@@ -11,7 +11,6 @@ cd install
 cp -r "$ROOTDIR"/externals/SPIRV-Headers/include/spirv include
 cp "$ROOTDIR"/dist/CMakeLists.txt .
 
-VERSION=$(echo "$VERSION" | tr -d "v")
 TARBALL=sirit-$PLATFORM-$VERSION.tar
 
 tar -cf "$ROOTDIR"/artifacts/"$TARBALL" ./*
