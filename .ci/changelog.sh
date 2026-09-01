@@ -31,17 +31,14 @@ echo
 echo "| Build | sha1sum | sha256sum | sha512sum |"
 echo "| ----- | ------- | --------- | --------- |"
 
-artifact "Android (x86_64)" android-x86_64
+artifact "Android (x86_64)" android-amd64
 artifact "Android (aarch64)" android-aarch64
 artifact "Windows (amd64)" windows-amd64
-artifact "Windows (arm64)" windows-arm64
+artifact "Windows (arm64)" windows-aarch64
 artifact "MinGW (amd64)" mingw-amd64
-artifact "MinGW (arm64)" mingw-arm64
+artifact "MinGW (arm64)" mingw-aarch64
 artifact "Linux (amd64)" linux-amd64
 artifact "Linux (aarch64)" linux-aarch64
-artifact "Solaris (amd64)" solaris-amd64
-artifact "FreeBSD (amd64)" freebsd-amd64
-artifact "OpenBSD (amd64)" openbsd-amd64
-artifact macOS macos-universal
+artifact macOS macos-aarch64
 artifact iOS ios-aarch64
 artifact Source source

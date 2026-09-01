@@ -14,17 +14,10 @@ cp "$ROOTDIR"/dist/CMakeLists.txt .
 VERSION=$(echo "$VERSION" | tr -d "v")
 TARBALL=sirit-$PLATFORM-$VERSION.tar
 
-# annoying
-if [ "$PLATFORM" = "windows-arm64" ]; then
-    tar cf "$ROOTDIR"/artifacts/"$TARBALL" -- *
-else
-	# suntar does not support -- *
-    # shellcheck disable=SC2035
-    tar -cf "$ROOTDIR"/artifacts/"$TARBALL" *
+tar -cf "$ROOTDIR"/artifacts/"$TARBALL" ./*
 
-    cd "$ROOTDIR"/artifacts
-    zstd -10 "$TARBALL"
-    rm "$TARBALL"
+cd "$ROOTDIR"/artifacts
+zstd -10 "$TARBALL"
+rm "$TARBALL"
 
-    ../.ci/sums.sh "$TARBALL".zst
-fi
+../.ci/sums.sh "$TARBALL".zst
